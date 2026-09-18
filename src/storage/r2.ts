@@ -58,3 +58,4 @@ export function isR2StorageEnabled(): boolean {
       process.env.R2_PUBLIC_URL,
   )
 }
+

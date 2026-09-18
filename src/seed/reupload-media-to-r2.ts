@@ -142,7 +142,7 @@ async function main() {
 
   console.log('\nDone.')
   console.log({ total, processed, uploaded, skipped, missing, failed })
-  process.exit(failed > 0 || missing > 0 ? 1 : 0)
+  process.exit(failed > 0 ? 1 : 0)
 }
 
 main().catch((err) => {

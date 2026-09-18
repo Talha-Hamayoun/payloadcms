@@ -80,7 +80,7 @@ async function main() {
   let missing = 0
   let failed = 0
 
-  const first = await payload.find({ collection: 'media', limit: pageSize, page: 1, depth: true })
+  const first = await payload.find({ collection: 'media', limit: pageSize, page: 1, depth: 0 })
   const total = first.totalDocs
   console.log(`Re-uploading ${total} media docs to R2 (concurrency=${concurrency}, skipExisting=${skipExisting})`)
 

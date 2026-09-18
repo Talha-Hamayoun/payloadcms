@@ -1,7 +1,8 @@
-import { getPayloadClient } from '@/lib/payload'
+import { getPayloadClient, getPayloadClientSafe } from '@/lib/payload'
 
 export async function getSiteSettings() {
-  const payload = await getPayloadClient()
+  const payload = await getPayloadClientSafe()
+  if (!payload) return null
   try {
     return await payload.findGlobal({
       slug: 'site-settings',
@@ -13,7 +14,8 @@ export async function getSiteSettings() {
 }
 
 export async function getHeader() {
-  const payload = await getPayloadClient()
+  const payload = await getPayloadClientSafe()
+  if (!payload) return null
   try {
     return await payload.findGlobal({
       slug: 'header',
@@ -25,7 +27,8 @@ export async function getHeader() {
 }
 
 export async function getFooter() {
-  const payload = await getPayloadClient()
+  const payload = await getPayloadClientSafe()
+  if (!payload) return null
   try {
     return await payload.findGlobal({
       slug: 'footer',
@@ -37,7 +40,8 @@ export async function getFooter() {
 }
 
 export async function getHomepage() {
-  const payload = await getPayloadClient()
+  const payload = await getPayloadClientSafe()
+  if (!payload) return null
   try {
     return await payload.findGlobal({
       slug: 'homepage',

@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import dns from 'dns'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -16,6 +17,9 @@ import { BlogPosts } from './collections/BlogPosts'
 import { BlogCategories, BlogTags } from './collections/BlogTaxonomy'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Footer, Header, Homepage, SiteSettings } from './globals'
+
+// Neon returns AAAA + A records; prefer IPv4 to avoid ENETUNREACH timeouts on some networks
+dns.setDefaultResultOrder('ipv4first')
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -52,7 +56,15 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.MAIN_DATABASE_URL || '',
+      // Neon cold-start / flaky networks need a longer connect window than pg default
+      connectionTimeoutMillis: 30_000,
+      idleTimeoutMillis: 20_000,
+      max: 10,
+      keepAlive: true,
     },
+    // Use migrations for Neon / production; avoid auto-push on remote DBs
+    push: false,
+    migrationDir: path.resolve(dirname, 'migrations'),
   }),
   sharp,
   upload: {

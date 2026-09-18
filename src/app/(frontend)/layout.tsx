@@ -10,6 +10,9 @@ import { getFooter, getHeader, getSiteSettings } from '@/lib/data/globals'
 import { DEFAULT_NAV, SITE_NAME } from '@/constants'
 import './globals.css'
 
+// Avoid build-time DB prerender — Neon can timeout while Next statically generates pages
+export const dynamic = 'force-dynamic'
+
 const display = Oswald({
   subsets: ['latin'],
   variable: '--font-display',
@@ -37,12 +40,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
-  const [settings, header, footer, categories] = await Promise.all([
+  const [settings, header, footer, categoriesResult] = await Promise.all([
     getSiteSettings(),
     getHeader(),
     getFooter(),
-    getCategories(12),
+    getCategories(12).catch(() => ({ docs: [] })),
   ])
+  const categories = categoriesResult
 
   const navigation =
     header?.navigation && header.navigation.length > 0

@@ -25,7 +25,19 @@ dns.setDefaultResultOrder('ipv4first')
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const serverURL = (
+  process.env.NEXT_PUBLIC_SERVER_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : '') ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+).replace(/\/$/, '')
+
 export default buildConfig({
+  serverURL: serverURL || undefined,
+  csrf: [serverURL, process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '']
+    .filter(Boolean)
+    .filter((url, index, arr) => arr.indexOf(url) === index),
   admin: {
     user: Users.slug,
     importMap: {

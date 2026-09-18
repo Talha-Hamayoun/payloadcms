@@ -1,11 +1,6 @@
 import { s3Storage } from '@payloadcms/storage-s3'
 import type { Plugin } from 'payload'
 
-/**
- * Cloudflare R2 via the official Payload S3 storage adapter.
- * Enabled only when all required R2 env vars are present — otherwise
- * Media continues to use local `staticDir` (existing files stay untouched).
- */
 export function createR2StoragePlugin(): Plugin {
   const accountId = process.env.R2_ACCOUNT_ID
   const accessKeyId = process.env.R2_ACCESS_KEY_ID

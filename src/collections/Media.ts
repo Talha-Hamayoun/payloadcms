@@ -14,6 +14,8 @@ export const Media: CollectionConfig = {
     defaultColumns: ['filename', 'alt', 'updatedAt'],
   },
   upload: {
+    // Used when R2 is not configured. When R2 env vars are set,
+    // @payloadcms/storage-s3 disables local storage automatically.
     staticDir: 'media',
     mimeTypes: ['image/*'],
     imageSizes: [

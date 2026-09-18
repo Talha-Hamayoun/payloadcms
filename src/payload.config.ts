@@ -17,6 +17,7 @@ import { BlogPosts } from './collections/BlogPosts'
 import { BlogCategories, BlogTags } from './collections/BlogTaxonomy'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Footer, Header, Homepage, SiteSettings } from './globals'
+import { createR2StoragePlugin } from './storage/r2'
 
 // Neon returns AAAA + A records; prefer IPv4 to avoid ENETUNREACH timeouts on some networks
 dns.setDefaultResultOrder('ipv4first')
@@ -72,4 +73,5 @@ export default buildConfig({
       fileSize: 10_000_000,
     },
   },
+  plugins: [createR2StoragePlugin()],
 })

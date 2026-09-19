@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Barlow, Oswald } from 'next/font/google'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
@@ -56,19 +56,23 @@ export default async function FrontendLayout({ children }: { children: React.Rea
         }))
       : DEFAULT_NAV
 
+  const headerProps = {
+    siteName: settings?.siteName || SITE_NAME,
+    navigation,
+    categories: asCategoryCards(categories.docs),
+    announcement: header?.announcement,
+    cta: header?.cta,
+    whatsappNumber: settings?.whatsappNumber,
+    contactNumber: settings?.contactNumber,
+    logo: header?.logo || settings?.siteLogo,
+  }
+
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="flex min-h-screen flex-col font-[family-name:var(--font-body)]">
-        <Header
-          siteName={settings?.siteName || SITE_NAME}
-          navigation={navigation}
-          categories={asCategoryCards(categories.docs)}
-          announcement={header?.announcement}
-          cta={header?.cta}
-          whatsappNumber={settings?.whatsappNumber}
-          contactNumber={settings?.contactNumber}
-          logo={header?.logo || settings?.siteLogo}
-        />
+        <Suspense fallback={<div className="h-[7.5rem] border-b border-border bg-surface lg:h-[10.5rem]" />}>
+          <Header {...headerProps} />
+        </Suspense>
         <main className="flex-1">{children}</main>
         <Footer
           siteName={settings?.siteName || SITE_NAME}

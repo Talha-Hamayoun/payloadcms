@@ -4,7 +4,13 @@ import { adminFieldAccess, adminOnly, adminOrSelf } from '@/access'
 
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    // Required on HTTPS (Vercel); without this, some browsers drop the session cookie on mutations
+    cookies: {
+      sameSite: 'Lax',
+      secure: process.env.NODE_ENV !== 'development',
+    },
+  },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'email', 'role', 'active'],

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { ChevronDown, Menu, MessageCircle, Search, X } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 
@@ -27,9 +27,22 @@ export type HeaderProps = {
   logo?: Media | string | number | null
 }
 
-function isActivePath(pathname: string, href: string) {
+/** Match nav hrefs including query filters (e.g. Spare Parts vs Accessories). */
+function isActivePath(pathname: string, href: string, searchParams: URLSearchParams) {
   if (href === '/') return pathname === '/'
-  const base = href.split('?')[0]
+
+  const [base, query = ''] = href.split('?')
+  const hrefParams = new URLSearchParams(query)
+
+  if (hrefParams.size > 0) {
+    // Filter links only highlight on their exact listing URL, not product detail pages
+    if (pathname !== base) return false
+    for (const [key, value] of hrefParams.entries()) {
+      if (searchParams.get(key) !== value) return false
+    }
+    return true
+  }
+
   return pathname === base || pathname.startsWith(`${base}/`)
 }
 
@@ -44,6 +57,7 @@ export function Header({
   logo,
 }: HeaderProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [megaOpen, setMegaOpen] = useState(false)
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
@@ -145,15 +159,6 @@ export function Header({
                 {cta.label}
               </Button>
             ) : null}
-
-            {/* {contactNumber ? (
-              <a
-                href={`tel:${contactNumber.replace(/\s+/g, '')}`}
-                className="hidden text-xs font-medium text-steel xl:inline hover:text-ink"
-              >
-                {contactNumber}
-              </a>
-            ) : null} */}
           </div>
         </div>
 
@@ -221,7 +226,7 @@ export function Header({
           <nav aria-label="Main" className="flex items-center">
             <ul className="flex items-center gap-0.5">
               {navigation.map((link) => {
-                const active = isActivePath(pathname, link.href)
+                const active = isActivePath(pathname, link.href, searchParams)
                 return (
                   <li key={`${link.href}-${link.label}`}>
                     <Link
